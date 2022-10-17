@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useInView } from 'react-intersection-observer';
 import { sendMessage, selectMessages, refreshMessages } from "./redux/messagesSlice";
-import { StyledMessages, Message, LeftMessageBubble, RightMessageBubble } from "./Messages";
-import { TypeMessageBox, TypeUsernameBox } from "./Boxes";
+import { StyledMessages, Message, LeftMessageBubble, RightMessageBubble } from "./components/Messages";
+import { TypeMessageBox, TypeUsernameBox } from "./components/Boxes";
 
 export default function App() {
   const { ref, inView } = useInView({
