@@ -17,10 +17,13 @@ export const messagesSlice = createSlice({
       messages.push(action.payload);
       localStorage.setItem('messages', JSON.stringify(messages));
     },
+    refreshMessages: (state) => {
+        state.value = [...(JSON.parse(localStorage.getItem('messages')))];
+    }
   },
 });
 
-export const { sendMessage, getMessages } = messagesSlice.actions;
+export const { sendMessage, getMessages, refreshMessages } = messagesSlice.actions;
 
 export const selectMessages = (state) => state.messages.value;
 

@@ -1,15 +1,30 @@
 import "./styles.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { sendMessage, selectMessages } from "./redux/messagesSlice";
-import { StyledMessages, Message, RightMessageBubble } from "./Messages";
+import { sendMessage, selectMessages, refreshMessages } from "./redux/messagesSlice";
+import { StyledMessages, Message, LeftMessageBubble, RightMessageBubble } from "./Messages";
+import { TypeMessageBox, TypeUsernameBox } from "./Boxes";
 
 export default function App() {
-  const messages = useSelector(selectMessages);
+  let messages = useSelector(selectMessages);
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [text, setText] = useState("");
   const [step, setStep] = useState(0);
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    window.addEventListener('storage', (event) => {
+      if (event.storageArea != localStorage) return;
+      if (event.key === 'messages') {
+        dispatch(refreshMessages())
+      }
+     });
+  })
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+  }, [messages]);
 
   const onChangeUsername = (e) => {
     setUsername(e.target.value);
@@ -24,16 +39,25 @@ export default function App() {
     setText(e.target.value);
   };
 
+  
+
   const onSendMessage = () => {
-    dispatch(sendMessage({ owner: sessionStorage.getItem('username'), text }));
+    dispatch(sendMessage({ owner: sessionStorage.getItem("username"), text }));
+    setText('');
   };
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      onSendMessage()
+    }
+  }
 
   return (
     <div className="App">
       <h1>Chat with friends</h1>
-      <div>
+      <div className="messaging">
         {step === 0 ? (
-          <div>
+          <TypeUsernameBox>
             <input
               type="text"
               value={username}
@@ -41,29 +65,62 @@ export default function App() {
               name="username"
               onChange={onChangeUsername}
             />
-            <button onClick={addUser}>Add</button>
-          </div>
+            <button onClick={addUser}>Add User</button>
+          </TypeUsernameBox>
         ) : (
-          <div>
+          <div className="messaging">
             <StyledMessages>
               {messages && messages.length > 0
                 ? messages.map((message, index) => {
                     return (
-                      <Message isOwnMessage={message.owner === sessionStorage.getItem('username')} key={index}>
-                        <div id='avatar'>{message.owner[0].toUpperCase()}</div>
-                        <div id='text'><span>{message.text}</span></div>
-                      </Message>
+                      <div key={index}>
+                        {message.owner ===
+                        sessionStorage.getItem("username") ? (
+                          <Message isOwnMessage={message.owner ===
+                            sessionStorage.getItem("username")}>
+                            <div className="avatar">{'You'}</div>
+                          <RightMessageBubble>
+                            <div className="bubble triangle right-top">
+                              <div className="text">
+                                <p>
+                                  {message.text}
+                                </p>
+                              </div>
+                            </div>
+                          </RightMessageBubble>
+                          </Message>
+                        ) : (
+                          <Message isOwnMessage={message.owner ===
+                            sessionStorage.getItem("username")}>
+                            <div className="avatar">{message.owner[0]}</div>
+                          <LeftMessageBubble>
+                            <div className="bubble triangle left-top">
+                              <div className="text">
+                                <p>
+                                  {message.text}
+                                </p>
+                              </div>
+                            </div>
+                          </LeftMessageBubble>
+                          </Message>
+                        )}
+                      </div>
                     );
                   })
                 : ""}
+                <div ref={bottomRef}></div>
             </StyledMessages>
+            <TypeMessageBox>
             <input
               type="text"
               value={text}
               name="message"
+              onKeyDown={handleKeyDown}
+              placeholder="Leave a message"
               onChange={onChangeMessage}
             />
-            <button onClick={onSendMessage}>Send Message</button>
+            <button onClick={onSendMessage}>Send</button>
+            </TypeMessageBox>
           </div>
         )}
       </div>
