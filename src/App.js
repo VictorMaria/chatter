@@ -79,7 +79,7 @@ export default function App() {
               name="username"
               onChange={onChangeUsername}
             />
-            <button onClick={addUser}>Add User</button>
+            <button onClick={addUser} disabled={!username}>Add User</button>
           </TypeUsernameBox>
         ) : (
           <div className="messaging">
@@ -133,7 +133,7 @@ export default function App() {
               placeholder="Leave a message"
               onChange={onChangeMessage}
             />
-            <button onClick={onSendMessage}>Send</button>
+            <button onClick={onSendMessage} disabled={!text}>Send</button>
             </TypeMessageBox>
           </div>
         )}
