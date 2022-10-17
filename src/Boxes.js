@@ -4,7 +4,7 @@ export const TypeMessageBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  bottom: 120px;
+  bottom: 80px;
   position: fixed;
   background-color: #3b81e5;
   height: 30px;

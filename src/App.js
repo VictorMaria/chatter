@@ -1,12 +1,17 @@
 import "./styles.css";
 import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useInView } from 'react-intersection-observer';
 import { sendMessage, selectMessages, refreshMessages } from "./redux/messagesSlice";
 import { StyledMessages, Message, LeftMessageBubble, RightMessageBubble } from "./Messages";
 import { TypeMessageBox, TypeUsernameBox } from "./Boxes";
 
 export default function App() {
-  let messages = useSelector(selectMessages);
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+  const [pageSize, setPageSize] = useState(-6)
+  let messages = useSelector(selectMessages).slice(pageSize);
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [text, setText] = useState("");
@@ -20,7 +25,16 @@ export default function App() {
         dispatch(refreshMessages())
       }
      });
-  })
+  });
+
+   useEffect(() => {
+    if (inView) {
+      const newPageSize = pageSize -6; 
+      setPageSize(newPageSize)
+      dispatch(refreshMessages())
+    }
+  
+   }, [inView]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({behavior: 'smooth'});
@@ -73,13 +87,13 @@ export default function App() {
               {messages && messages.length > 0
                 ? messages.map((message, index) => {
                     return (
-                      <div key={index}>
+                      <div ref={index === 0 ? ref : undefined} key={index}>
                         {message.owner ===
                         sessionStorage.getItem("username") ? (
                           <Message isOwnMessage={message.owner ===
                             sessionStorage.getItem("username")}>
                             <div className="avatar">{'You'}</div>
-                          <RightMessageBubble>
+                          <RightMessageBubble ref={index === 0 ? ref : undefined}>
                             <div className="bubble triangle right-top">
                               <div className="text">
                                 <p>
@@ -93,7 +107,7 @@ export default function App() {
                           <Message isOwnMessage={message.owner ===
                             sessionStorage.getItem("username")}>
                             <div className="avatar">{message.owner[0]}</div>
-                          <LeftMessageBubble>
+                          <LeftMessageBubble ref={index === 0 ? ref : undefined}>
                             <div className="bubble triangle left-top">
                               <div className="text">
                                 <p>
