@@ -10,7 +10,7 @@ export default function App() {
   const { ref, inView } = useInView({
     threshold: 0,
   });
-  const [pageSize, setPageSize] = useState(-6)
+  const [pageSize, setPageSize] = useState(-26)
   let messages = useSelector(selectMessages).slice(pageSize);
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
@@ -29,7 +29,7 @@ export default function App() {
 
    useEffect(() => {
     if (inView) {
-      const newPageSize = pageSize -6; 
+      const newPageSize = pageSize -26; 
       setPageSize(newPageSize)
       dispatch(refreshMessages())
     }
