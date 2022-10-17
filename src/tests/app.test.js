@@ -1,0 +1,11 @@
+import { render, fireEvent, screen } from "@testing-library/react";
+import App from '../App';
+import { Provider } from 'react-redux';
+import store from "../redux/store";
+
+//test block
+test("renders app component", () => {
+// render the component on virtual dom
+render(<Provider store={store}><App /></Provider>);
+
+});
