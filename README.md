@@ -14,5 +14,8 @@ Navigate into the project's directory
 Install dependencies
 ```npm install```
 
+Run tests
+```npm run test```
+
 Start the app
 ```npm start```
