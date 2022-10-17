@@ -73,13 +73,14 @@ export default function App() {
         {step === 0 ? (
           <TypeUsernameBox>
             <input
+            data-testid="username"
               type="text"
               value={username}
               placeholder="Enter Username"
               name="username"
               onChange={onChangeUsername}
             />
-            <button onClick={addUser} disabled={!username}>Add User</button>
+            <button data-testid="add-user" onClick={addUser} disabled={!username}>Add User</button>
           </TypeUsernameBox>
         ) : (
           <div className="messaging">
